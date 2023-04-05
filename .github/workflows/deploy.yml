@@ -14,6 +14,9 @@ jobs:
         uses: actions/setup-node@v1
         with:
             node-version: 14
+      
+      - name: Project Setup 🔧
+        run: npm ci
 
       - name: Validate 🔎
         run: npm run validate_apps
