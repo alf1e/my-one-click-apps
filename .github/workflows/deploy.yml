@@ -32,4 +32,5 @@ jobs:
           branch: gh-pages
           folder: dist
           git-config-name: ItsMePushBot
+          git-config-email: alfie@itsmealfie0.com
           clean: true
