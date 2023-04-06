@@ -1,0 +1,39 @@
+captainVersion: 4
+services:
+    $$cap_appname:
+        volumes:
+          - $$cap_appname-config:/app/config
+          - $$cap_appname-storage:/app/storage
+          - $$cap_appname-modules:/app/breadcord/modules
+        restart: always
+        caproverExtra:
+            dockerfileLines:
+              - FROM ghcr.io/breadcord/breadcord:main
+
+              - RUN apt update && apt install git -y
+              - RUN git clone https://github.com/alf1e/first-time-sync /app/breadcord/modules/fts
+
+              - RUN mkdir /app/config && cp /app/breadcord/settings_schema.toml /app/config/settings.toml
+
+              - RUN sed -i 's/\(^token = \).*/\1\"$$cap_token\"/' /app/config/settings.toml
+              - RUN sed -i 's/\(^modules = \).*/\1\[\"core\"\, \"settings\"\, \"modulemanager\"\, \"fts\"\]/' /app/config/settings.toml
+
+caproverOneClickApp:
+    variables:
+        - id: $$cap_breadcord_version
+          label: Breadcord Version
+          defaultValue: main
+          description: Check out their Github Packages page for tags, https://github.com/Breadcord/Breadcord/pkgs/container/breadcord
+        - id: $$cap_token
+          label: Discord Bot Token
+          description: Obtain a Discord Bot Token from https://discord.com/developers/applications
+    instructions:
+        start: |-
+            Please get a discord bot token ready from https://discord.com/developers/applications
+        end: |-
+            Breadcord is deployed! Please invite the bot to your server and then run '!fts'.
+            Then your ready to go!
+    displayName: Breadcord
+    isOfficial: true
+    description: The modular self-hostable Discord bot framework with customisability that doesn't go against the grain
+    documentation: N/A
