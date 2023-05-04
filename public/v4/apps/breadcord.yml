@@ -2,27 +2,26 @@ captainVersion: 4
 services:
     $$cap_appname:
         volumes:
-          - $$cap_appname-config:/app/config
-          - $$cap_appname-storage:/app/storage
-          - $$cap_appname-modules:/app/breadcord/modules
+          - $$cap_appname-data:/app/data
         restart: always
         caproverExtra:
             dockerfileLines:
-              - FROM ghcr.io/breadcord/breadcord:main
+              - FROM ghcr.io/breadcord/breadcord:$$cap_breadcord_version
 
               - RUN apt update && apt install git -y
-              - RUN git clone https://github.com/alf1e/first-time-sync /app/breadcord/modules/fts
 
-              - RUN mkdir /app/config && cp /app/breadcord/settings_schema.toml /app/config/settings.toml
+              - RUN mkdir /app/data && cp /app/breadcord/settings_schema.toml /app/data/settings.toml
 
-              - RUN sed -i 's/\(^token = \).*/\1\"$$cap_token\"/' /app/config/settings.toml
-              - RUN sed -i 's/\(^modules = \).*/\1\[\"core\"\, \"settings\"\, \"modulemanager\"\, \"fts\"\]/' /app/config/settings.toml
+              - RUN git clone https://github.com/Breadcord-Toasts/OwnerUtils /app/data/modules/owner_utils
+
+              - RUN sed -i 's/\(^token = \).*/\1\"$$cap_token\"/' /app/data/settings.toml
+              - RUN sed -i 's/\(^modules = \).*/\1\[\"core\"\, \"settings\"\, \"modulemanager\"\, \"owner_utils\"\]/' /app/data/settings.toml
 
 caproverOneClickApp:
     variables:
         - id: $$cap_breadcord_version
           label: Breadcord Version
-          defaultValue: main
+          defaultValue: main@sha256:93ddb33d73eb86643c2528327492725e84ba3b0b913f4bbedc399b6b86140ea0
           description: Check out their Github Packages page for tags, https://github.com/Breadcord/Breadcord/pkgs/container/breadcord
         - id: $$cap_token
           label: Discord Bot Token
@@ -31,7 +30,7 @@ caproverOneClickApp:
         start: |-
             Please get a discord bot token ready from https://discord.com/developers/applications
         end: |-
-            Breadcord is deployed! Please invite the bot to your server and then run '!fts'.
+            Breadcord is deployed! Please invite the bot to your server and then run '!sync ~'.
             Then your ready to go!
     displayName: Breadcord
     isOfficial: true
